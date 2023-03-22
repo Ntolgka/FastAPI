@@ -1,11 +1,15 @@
 from random import randrange
 from typing import Optional
-from fastapi import Body, FastAPI, Response, status, HTTPException
+from fastapi import Body, FastAPI, Response, status, HTTPException, Depends
 from pydantic import BaseModel
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from sqlalchemy.orm import Session
+from . import models
+from .database import engine, get_db
 
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -27,23 +31,15 @@ while True:
         print("Connection to database failed dur to:", error)
         time.sleep(5)
 
-my_posts = [{"id": 1, "title": "Hello World 1", "content": "This is my first post"},
-            {"id": 2, "title": "Hello World 2",
-                "content": "This is my second post"},
-            {"id": 3, "title": "Hello World 3", "content": "This is my third post"},
-            {"id": 4, "title": "Hello World 4", "content": "This is my fourth post"}]
-
-
-def find_post(id: int):
-    for post in my_posts:
-        if post["id"] == id:
-            return post
-    return None
-
 
 @ app.get("/")
 def root():
     return {"message": "Hello World"}
+
+
+@ app.get("/sqlalchemy")
+def test_posts(db: Session = Depends(get_db)):
+    return {"status": "success"}
 
 
 @ app.get("/posts")
