@@ -10,3 +10,14 @@ class Post(Base):
     published = Column(Boolean, server_default='TRUE', default=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False,
                         server_default=text('NOW()'))
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, nullable=False)
+    username = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    is_active = Column(Boolean, server_default='TRUE', default=True)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False,
+                        server_default=text('NOW()'))
