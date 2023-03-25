@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import Body, FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from .. import models, schemas, oauth2
@@ -10,8 +11,20 @@ router = APIRouter(
 
 
 @ router.get("/", response_model=list[schemas.Post])
-def posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-    posts = db.query(models.Post).all()
+def posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
+          limit: int = 10, skip: int = 0, search: Optional[str] = ""):
+    posts = db.query(models.Post).filter(
+        models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    return posts
+
+
+@ router.get("/my-posts", response_model=list[schemas.Post])
+def my_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    posts = db.query(models.Post).filter(
+        models.Post.owner_id == current_user.id).all()
+    if not posts:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="You have no posts yet")
     return posts
 
 
