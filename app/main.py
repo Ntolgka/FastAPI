@@ -5,7 +5,7 @@ from .routers import post, user, auth, vote
 from .config import settings
 
 # This creates the database tables if they don't exist already
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
