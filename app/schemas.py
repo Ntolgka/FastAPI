@@ -67,3 +67,11 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)  # le = less than or equal to
+
+
+class Comment(BaseModel):
+    post_id: int
+    content: str
+
+    class Config:
+        orm_mode = True
