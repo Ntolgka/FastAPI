@@ -44,6 +44,7 @@ class Comment(BaseModel):
 class CommentOut(BaseModel):
     id: int
     content: str
+    created_at: datetime
     owner: Optional[UserComment] = Field(
         None, description="The user who wrote the comment")
 
