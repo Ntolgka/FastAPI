@@ -52,6 +52,10 @@ class CommentOut(BaseModel):
         orm_mode = True
 
 
+class CommentUpdate(BaseModel):
+    content: str
+
+
 class PostBase(BaseModel):
     title: str
     content: str

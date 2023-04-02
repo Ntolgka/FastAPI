@@ -70,12 +70,30 @@ def delete_comment(id: int, db: Session = Depends(database.get_db), current_user
 
     if comment == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Post with id: {id} not found")
+                            detail=f"Comment with id: {id} not found")
 
     if comment.user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=f"You are not allowed to delete this post")
+                            detail=f"You are not allowed to delete this comment")
 
     comment_query.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@ router.put("/{id}", response_model=schemas.CommentOut, status_code=status.HTTP_202_ACCEPTED)
+def update_comment(id: int, updated_comment: schemas.CommentUpdate, db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+    comment_query = db.query(models.Comment).filter(models.Comment.id == id)
+    comment = comment_query.first()
+
+    if comment == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Comment with id: {id} not found")
+
+    if comment.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=f"You are not allowed to update this comment")
+
+    comment_query.update({"content": updated_comment.content})
+    db.commit()
+    return comment
