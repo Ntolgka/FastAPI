@@ -15,7 +15,6 @@ def create_comment(comment: schemas.Comment, db: Session = Depends(database.get_
 
     post = db.query(models.Post).filter(
         models.Post.id == comment.post_id).first()
-    print(post.id)
     if not post:  # if post does not exist
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id: {comment.post_id} not found")
@@ -31,6 +30,14 @@ def create_comment(comment: schemas.Comment, db: Session = Depends(database.get_
 
 @router.get("/{id}", response_model=List[schemas.CommentOut])
 def get_comments(id: int, db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+
+    post = db.query(models.Post).filter(
+        models.Post.id == id).first()
+
+    if not post:  # if post does not exist
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Post with id: {id} not found")
+
     comments = db.query(
         models.Comment, models.User).join(
         models.User, models.Comment.user_id == models.User.id).filter(
@@ -38,7 +45,7 @@ def get_comments(id: int, db: Session = Depends(database.get_db), current_user: 
 
     if not comments:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Comments for post with id: {id} not found")
+                            detail=f"There is no comments for the post with id: {id}")
 
     comment_outs = [
         schemas.CommentOut(
