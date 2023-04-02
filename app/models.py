@@ -43,9 +43,9 @@ class Comment(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False,
                         server_default=text('NOW()'))
     user_id = Column(Integer, ForeignKey(
-        "users.id", ondelete="CASCADE"), nullable=False, )
+        "users.id", ondelete="CASCADE"), nullable=False,)
     post_id = Column(Integer, ForeignKey(
-        "posts.id", ondelete="CASCADE"), nullable=False, )
+        "posts.id", ondelete="CASCADE"), nullable=False,)
 
     owner = relationship("User")
     post = relationship("Post")

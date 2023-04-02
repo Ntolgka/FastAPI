@@ -1,8 +1,8 @@
 """Add comment table
 
-Revision ID: 12211dd72629
+Revision ID: 913153526073
 Revises: b5d5a344735d
-Create Date: 2023-03-31 19:33:35.150860
+Create Date: 2023-04-01 17:17:30.377166
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '12211dd72629'
+revision = '913153526073'
 down_revision = 'b5d5a344735d'
 branch_labels = None
 depends_on = None

@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, conint
+from pydantic import BaseModel, EmailStr, Field, conint
 
 
 class UserCreate(BaseModel):
@@ -19,9 +19,36 @@ class UserOut(BaseModel):
         orm_mode = True
 
 
+class UserComment(BaseModel):
+    id: int
+    username: str
+    email: EmailStr
+
+    class Config:
+        orm_mode = True
+
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
+
+class Comment(BaseModel):
+    post_id: int
+    content: str
+
+    class Config:
+        orm_mode = True
+
+
+class CommentOut(BaseModel):
+    id: int
+    content: str
+    owner: Optional[UserComment] = Field(
+        None, description="The user who wrote the comment")
+
+    class Config:
+        orm_mode = True
 
 
 class PostBase(BaseModel):
@@ -40,7 +67,6 @@ class Post(PostBase):
     # No need to title, content, published because they are inherited from PostBase
     id: int
     created_at: datetime
-    owner_id: int
     owner: UserOut
 
     class Config:
@@ -67,11 +93,3 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)  # le = less than or equal to
-
-
-class Comment(BaseModel):
-    post_id: int
-    content: str
-
-    class Config:
-        orm_mode = True

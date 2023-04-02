@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import Body, FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from .. import models, schemas, oauth2, database
@@ -21,7 +22,34 @@ def create_comment(comment: schemas.Comment, db: Session = Depends(database.get_
 
     new_comment = models.Comment(
         user_id=current_user.id, post_id=comment.post_id, content=comment.content)
+
     db.add(new_comment)
     db.commit()
     db.refresh(new_comment)
     return new_comment
+
+
+@router.get("/{id}", response_model=List[schemas.CommentOut])
+def get_comments(id: int, db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+    comments = db.query(
+        models.Comment, models.User).join(
+        models.User, models.Comment.user_id == models.User.id).filter(
+        models.Comment.post_id == id).all()
+
+    if not comments:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Comments for post with id: {id} not found")
+
+    comment_outs = [
+        schemas.CommentOut(
+            id=comment.id,
+            content=comment.content,
+            owner=schemas.UserComment(
+                id=user.id,
+                email=user.email,
+                username=user.username
+            )
+        ) for comment, user in comments
+    ]
+
+    return comment_outs
