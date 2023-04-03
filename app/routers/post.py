@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional
 from fastapi import Body, FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
@@ -95,6 +96,12 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail=f"You are not allowed to update this post")
 
-    post_query.update(updated_post.dict(), synchronize_session=False)
+    if "updated_at" in updated_post:
+        del updated_post["updated_at"]
+
+    updated_post_data = updated_post.dict()
+    updated_post_data["updated_at"] = datetime.datetime.now()
+
+    post_query.update(updated_post_data, synchronize_session=False)
     db.commit()
     return post

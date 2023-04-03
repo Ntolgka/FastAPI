@@ -64,6 +64,7 @@ class PostBase(BaseModel):
 
 class PostCreate(PostBase):
     # Because there is PostBase in argument, it will inherit all the attributes from PostBase
+    updated_at: Optional[datetime]
     pass
     # pass is a null statement in python it tells python that class is empty
 
@@ -72,6 +73,7 @@ class Post(PostBase):
     # No need to title, content, published because they are inherited from PostBase
     id: int
     created_at: datetime
+    updated_at: Optional[datetime]
     owner: UserOut
 
     class Config:
