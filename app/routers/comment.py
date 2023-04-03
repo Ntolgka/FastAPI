@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from fastapi import Body, FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
@@ -94,6 +95,10 @@ def update_comment(id: int, updated_comment: schemas.CommentUpdate, db: Session 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail=f"You are not allowed to update this comment")
 
-    comment_query.update({"content": updated_comment.content})
+    if "updated_at" in updated_comment:
+        del updated_comment["updated_at"]
+
+    comment_query.update(
+        {"content": updated_comment.content, "updated_at": datetime.now()})
     db.commit()
     return comment

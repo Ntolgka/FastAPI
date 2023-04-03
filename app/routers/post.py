@@ -1,8 +1,8 @@
-import datetime
 from typing import Optional
 from fastapi import Body, FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+from datetime import datetime
 from .. import models, schemas, oauth2
 from ..database import get_db
 
@@ -100,7 +100,7 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
         del updated_post["updated_at"]
 
     updated_post_data = updated_post.dict()
-    updated_post_data["updated_at"] = datetime.datetime.now()
+    updated_post_data["updated_at"] = datetime.now()
 
     post_query.update(updated_post_data, synchronize_session=False)
     db.commit()

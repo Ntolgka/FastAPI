@@ -45,6 +45,7 @@ class CommentOut(BaseModel):
     id: int
     content: str
     created_at: datetime
+    updated_at: Optional[datetime]
     owner: Optional[UserComment] = Field(
         None, description="The user who wrote the comment")
 
@@ -54,6 +55,7 @@ class CommentOut(BaseModel):
 
 class CommentUpdate(BaseModel):
     content: str
+    updated_at: Optional[datetime]
 
 
 class PostBase(BaseModel):
