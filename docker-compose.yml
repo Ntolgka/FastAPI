@@ -5,9 +5,12 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8000:8000"
+      - 8000:8000
+    volumes:
+      - .:/usr/src/app:ro
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     environment:
-      - DATABASE_HOSTNAME=localhost
+      - DATABASE_HOSTNAME=postgres
       - DATABASE_PORT=5432
       - DATABASE_NAME=fastapi
       - DATABASE_USERNAME=postgres
@@ -21,7 +24,7 @@ services:
       POSTGRES_PASSWORD: password123
       POSTGRES_DB: fastapi
     volumes:
-      - ./postgres-db:/var/lib/postgresql/data
+      - postgres-db:/var/lib/postgresql/data
 
 volumes:
   postgres-db:
